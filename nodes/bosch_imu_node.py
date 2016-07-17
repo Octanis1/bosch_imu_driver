@@ -207,7 +207,7 @@ if __name__ == '__main__':
     if not(write_to_dev(ser, SYS_TRIGGER, 1, 0x00)):
         rospy.logerr("Unable to start IMU.")
 
-    if not(write_to_dev(ser, UNIT_SEL, 1, 0x83)):
+    if not(write_to_dev(ser, UNIT_SEL, 1, 0x82)):
         rospy.logerr("Unable to set IMU units.")
 
     if not(write_to_dev(ser, AXIS_MAP_CONFIG, 1, 0x24)):
@@ -224,7 +224,7 @@ if __name__ == '__main__':
     rate = rospy.Rate(frequency)
 
     # Factors for unit conversions
-    acc_fact = 1000.0
+    acc_fact = 100.0
     mag_fact = 16.0
     gyr_fact = 900.0
     seq = 0
