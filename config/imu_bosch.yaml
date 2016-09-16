@@ -6,3 +6,5 @@ frame_id: imu_bosch_link
 freqency: 200
 # Sensor operation mode --> modes could be found in sensor datasheet
 operation_mode: 0x08
+axis_map: 0x21 # Z=z, X=y, Y=x
+axis_map_sign: 0x00 # -X,-Y,-Z 

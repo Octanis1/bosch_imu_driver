@@ -103,6 +103,10 @@ PWR_MODE_NORMAL = 0x00
 PWR_MODE_LOW = 0x01
 PWR_MODE_SUSPEND  = 0x02
 
+#axis
+AXIS_CONF = 0x24
+AXIS_SIGN = 0x06
+
 # Communication constants
 BNO055_ID = 0xa0
 START_BYTE_WR = 0xaa
@@ -152,7 +156,7 @@ def write_to_dev(ser, reg_addr, length, data):
         return False
 
     if (buf_in.__len__() != 2) or (buf_in[1] != 0x01):
-        #rospy.logerr("Incorrect Bosh IMU device response.")
+       # rospy.logerr("Incorrect Bosh IMU device response.")
         return False
     return True
 
@@ -175,10 +179,12 @@ if __name__ == '__main__':
     # srv = Server(imuConfig, reconfig_callback)  # define dynamic_reconfigure callback
 
     # Get parameters values
-    port = rospy.get_param('~port', '/dev/ttyUSB0')
+    port = rospy.get_param('~port', '/dev/ttyS2')
     frame_id = rospy.get_param('~frame_id', 'imu_link')
     frequency = rospy.get_param('frequency', 100)
     operation_mode = rospy.get_param('operation_mode', OPER_MODE_NDOF)
+    axis_map = rospy.get_param('axis_map', AXIS_CONF)
+    axis_map_sign = rospy.get_param('axis_map_sign', AXIS_SIGN)
 
     # Open serial port
     rospy.loginfo("Opening serial port: %s...", port)
@@ -191,7 +197,8 @@ if __name__ == '__main__':
     # Check if IMU ID is correct
     buf = read_from_dev(ser, CHIP_ID, 1)
     if buf == 0 or buf[0] != BNO055_ID:
-        #rospy.logerr("Device ID is incorrect. Shutdown.")
+        rospy.logerr("Device ID is incorrect. Shutdown.")
+	rospy.logerr(buf)
         sys.exit(0)
 
     # IMU Configuration
@@ -210,14 +217,16 @@ if __name__ == '__main__':
     if not(write_to_dev(ser, UNIT_SEL, 1, 0x82)):
         rospy.logerr("Unable to set IMU units.")
 
-    if not(write_to_dev(ser, AXIS_MAP_CONFIG, 1, 0x24)):
+    if not(write_to_dev(ser, AXIS_MAP_CONFIG, 1, 0x21)):
         rospy.logerr("Unable to remap IMU axis.")
 
-    if not(write_to_dev(ser, AXIS_MAP_SIGN, 1, 0x06)):
+    if not(write_to_dev(ser, AXIS_MAP_SIGN, 1, 0x01)):
         rospy.logerr("Unable to set IMU axis signs.")
 
-    if not(write_to_dev(ser, OPER_MODE, 1, OPER_MODE_NDOF)):
+    if not(write_to_dev(ser, OPER_MODE, 1, operation_mode)):
         rospy.logerr("Unable to set IMU operation mode into operation mode.")
+    else:
+        rospy.loginfo("Set operation mode")
 
     rospy.loginfo("Bosch BNO055 IMU configuration complete.")
 
