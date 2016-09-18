@@ -181,7 +181,7 @@ if __name__ == '__main__':
     # Get parameters values
     port = rospy.get_param('~port', '/dev/ttyS2')
     frame_id = rospy.get_param('~frame_id', 'imu_link')
-    frequency = rospy.get_param('frequency', 100)
+    frequency = rospy.get_param('frequency', 20)
     operation_mode = rospy.get_param('operation_mode', OPER_MODE_NDOF)
     axis_map = rospy.get_param('axis_map', AXIS_CONF)
     axis_map_sign = rospy.get_param('axis_map_sign', AXIS_SIGN)
